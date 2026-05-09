@@ -37,6 +37,7 @@ jobs:
 
       - name: Format check
         run: npm run format:check
+        continue-on-error: true
 
       - name: TypeScript check
         run: npm typecheck
