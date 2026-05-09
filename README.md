@@ -10,6 +10,13 @@ A Discord bot that manages color-based roles in a Discord server.
 - **Health check endpoint** — HTTP `/` returns `{"status":"healthy","timestamp":"...","uptime":...}` for container orchestration
 - **Structured logging** — Configurable log levels
 
+## User Commands
+
+| Command | Description | Permissions |
+|---|---|---|
+| `/color <number>` | Set your color role (0 to reset) | Must have an allowed role |
+| `/colors` | List all available color roles | Must have an allowed role |
+
 ## Requirements
 
 - [Node.js](https://nodejs.org) >= 24.0.0
@@ -33,7 +40,7 @@ Copy `.env.example` to `.env` and fill in the values:
 | `HEALTH_PORT` | Port for the health check HTTP server | `3000` |
 | `ACCESS_DENIED_DESCRIPTION` | Message shown to users without allowed roles (supports markdown) | `Sorry, this command is for VIPs and Nitro Boosters only.` |
 | `ALLOWED_ROLES` | Comma-separated role IDs allowed to use color commands | `111,222,333` |
-| `COLOR_ROLE_<NAME>` | Mappings of color names to Discord role IDs (sorted alphabetically) | `COLOR_ROLE_BLUE=444` |
+| `COLOR_ROLE_<NAME>` | Mappings of color names to Discord role IDs (sorted numerically/alphabetically) | `COLOR_ROLE_BLUE=444` |
 
 ## Getting Started
 
@@ -111,10 +118,3 @@ When configuring `PIN_CHANNEL_ID`, the bot's role must have **all** of the follo
 > 3. Role hierarchy issue: the bot's role is below another role that denies `View Channel`
 >
 > **Fix:** In your Discord server settings, go to **Channel Permissions** for the target channel and ensure the bot's role has `View Channel` and `Read Message History` explicitly allowed.
-
-## Commands Reference
-
-| Command | Description | Permissions |
-|---|---|---|
-| `/color <number>` | Set your color role (0 to reset) | Must have an allowed role |
-| `/colors` | List all available color roles | Must have an allowed role |
