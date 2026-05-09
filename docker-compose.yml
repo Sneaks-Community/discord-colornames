@@ -2,6 +2,7 @@ services:
 
   discord-colornames:
     image: ghcr.io/sneaks-community/discord-colornames:latest
+    container_name: discord-colornames
     security_opt:
       - "apparmor=docker-default"
       - "no-new-privileges=true"
