@@ -12,11 +12,7 @@ export default {
     void (async () => {
       if (!interaction.isChatInputCommand()) {
         // Log unknown interaction types for debugging and extensibility
-        if (
-          interaction.isButton() ||
-          interaction.isSelectMenu() ||
-          interaction.isModalSubmit()
-        ) {
+        if (interaction.isButton() || interaction.isSelectMenu() || interaction.isModalSubmit()) {
           logger.warn(
             { customId: interaction.customId, interactionType: interaction.type },
             'Unhandled interaction type',
@@ -41,9 +37,11 @@ export default {
       try {
         await command.execute(interaction);
       } catch (error) {
-        const errorInfo =
-          error instanceof Error ? error.toString() : String(error);
-        logger.error({ commandName: interaction.commandName, error: errorInfo }, 'Command execution failed');
+        const errorInfo = error instanceof Error ? error.toString() : String(error);
+        logger.error(
+          { commandName: interaction.commandName, error: errorInfo },
+          'Command execution failed',
+        );
         const errorMessage = {
           content: 'An error occurred while executing this command.',
           flags: MessageFlags.Ephemeral,

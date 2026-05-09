@@ -25,20 +25,29 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
 
     // Check for null/undefined first
     if (!channel) {
-      logger.warn({ channelId }, 'PIN_CHANNEL_ID points to a channel that could not be found, skipping pin');
+      logger.warn(
+        { channelId },
+        'PIN_CHANNEL_ID points to a channel that could not be found, skipping pin',
+      );
       return;
     }
 
     // Check if it's text-based and not a thread
     if (!channel.isTextBased() || channel.isThread()) {
-      logger.warn({ channelId, channelType: channel.type }, 'PIN_CHANNEL_ID points to an invalid or non-sendable channel, skipping pin');
+      logger.warn(
+        { channelId, channelType: channel.type },
+        'PIN_CHANNEL_ID points to an invalid or non-sendable channel, skipping pin',
+      );
       return;
     }
 
     // Narrow to guild channels that support send() - exclude DM, Stage, Voice channels
     const isGuildChannel = 'guild' in channel && channel.guild !== null;
     if (!isGuildChannel) {
-      logger.warn({ channelId, channelType: channel.type }, 'PIN_CHANNEL_ID points to a non-guild channel, skipping pin');
+      logger.warn(
+        { channelId, channelType: channel.type },
+        'PIN_CHANNEL_ID points to a non-guild channel, skipping pin',
+      );
       return;
     }
 
@@ -48,19 +57,22 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
     // Diagnostic: Check bot's permissions before attempting pin operations
     const botMember = await sendableChannel.guild.members.fetch(client.user.id);
     const botPermissions = sendableChannel.permissionsFor(botMember);
-    logger.debug({
-      botHighestRolePosition: botMember.roles.highest.position,
-      botRolePosition: botMember.roles.highest.position,
-      channelId,
-      channelName: sendableChannel.name,
-      channelType: sendableChannel.type,
-      hasAdministrator: botPermissions?.has('Administrator') ?? false,
-      hasManageMessagesPermission: botPermissions?.has('ManageMessages') ?? false,
-      hasPinPermission: botPermissions?.has('PinMessages') ?? false,
-      hasReadMessageHistoryPermission: botPermissions?.has('ReadMessageHistory') ?? false,
-      hasSendMessagesPermission: botPermissions?.has('SendMessages') ?? false,
-      hasViewChannelPermission: botPermissions?.has('ViewChannel') ?? false,
-    }, 'Bot permissions diagnostic before pin');
+    logger.debug(
+      {
+        botHighestRolePosition: botMember.roles.highest.position,
+        botRolePosition: botMember.roles.highest.position,
+        channelId,
+        channelName: sendableChannel.name,
+        channelType: sendableChannel.type,
+        hasAdministrator: botPermissions?.has('Administrator') ?? false,
+        hasManageMessagesPermission: botPermissions?.has('ManageMessages') ?? false,
+        hasPinPermission: botPermissions?.has('PinMessages') ?? false,
+        hasReadMessageHistoryPermission: botPermissions?.has('ReadMessageHistory') ?? false,
+        hasSendMessagesPermission: botPermissions?.has('SendMessages') ?? false,
+        hasViewChannelPermission: botPermissions?.has('ViewChannel') ?? false,
+      },
+      'Bot permissions diagnostic before pin',
+    );
 
     // Fetch pinned messages to find existing color list pin
     let pinsResponse;
@@ -68,7 +80,10 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
       pinsResponse = await sendableChannel.messages.fetchPins();
       logger.debug({ channelId, pinCount: pinsResponse.items.length }, 'Fetched pinned messages');
     } catch (fetchError: unknown) {
-      logger.error({ channelId, error: fetchError }, 'Failed to fetch pinned messages - may lack ViewChannel or ReadMessageHistory permission');
+      logger.error(
+        { channelId, error: fetchError },
+        'Failed to fetch pinned messages - may lack ViewChannel or ReadMessageHistory permission',
+      );
       throw fetchError;
     }
 
@@ -82,9 +97,15 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
 
     if (existingPin) {
       // Update existing pin in place by editing the message
-      logger.info({ channelId, existingMessageId: existingPin.message.id }, 'Found existing color list pin, attempting to update');
+      logger.info(
+        { channelId, existingMessageId: existingPin.message.id },
+        'Found existing color list pin, attempting to update',
+      );
       await sendableChannel.messages.edit(existingPin.message.id, { embeds: [embed] });
-      logger.info({ channelId, messageId: existingPin.message.id }, 'Updated existing pinned color list');
+      logger.info(
+        { channelId, messageId: existingPin.message.id },
+        'Updated existing pinned color list',
+      );
     } else {
       // Create new message and pin it
       logger.info({ channelId }, 'No existing color list pin found, creating new message');

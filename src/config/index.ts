@@ -11,7 +11,9 @@ dotenv.config();
  * Zod schema for validating and parsing environment variables.
  */
 const configSchema = z.object({
-  ACCESS_DENIED_DESCRIPTION: z.string().default('Sorry, this command is for VIPs and Nitro Boosters only.'),
+  ACCESS_DENIED_DESCRIPTION: z
+    .string()
+    .default('Sorry, this command is for VIPs and Nitro Boosters only.'),
   ALLOWED_ROLES: z.string().default(''),
   DISCORD_CLIENT_ID: z.string().min(1, 'DISCORD_CLIENT_ID is required'),
   DISCORD_TOKEN: z.string().min(1, 'DISCORD_TOKEN is required'),
@@ -72,7 +74,9 @@ validateBotToken(parsed.DISCORD_TOKEN);
 
 const colorRoles = parseColorRoles();
 
-const allowedRolesRaw = parsed.ALLOWED_ROLES.split(',').map((r) => r.trim()).filter(Boolean);
+const allowedRolesRaw = parsed.ALLOWED_ROLES.split(',')
+  .map((r) => r.trim())
+  .filter(Boolean);
 
 export const config: BotConfig = {
   accessDeniedDescription: parsed.ACCESS_DENIED_DESCRIPTION,

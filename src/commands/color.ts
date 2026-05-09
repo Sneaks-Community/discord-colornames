@@ -45,7 +45,10 @@ export default {
       const member = interaction.member as GuildMember;
       const number = interaction.options.getInteger('number');
 
-      logger.debug({ commandName: 'color', number, userId: interaction.user.id }, 'Color command invoked');
+      logger.debug(
+        { commandName: 'color', number, userId: interaction.user.id },
+        'Color command invoked',
+      );
 
       if (number === null || number === undefined) {
         await safeReply(interaction, 'Please provide a valid number.');
@@ -69,8 +72,14 @@ export default {
           );
           await safeReply(interaction, 'All color roles have been removed.');
         } catch (error) {
-          logger.error({ error, userId: interaction.user.id }, 'Failed to remove color roles on reset');
-          await safeReply(interaction, 'Failed to remove color roles. Please check my permissions.');
+          logger.error(
+            { error, userId: interaction.user.id },
+            'Failed to remove color roles on reset',
+          );
+          await safeReply(
+            interaction,
+            'Failed to remove color roles. Please check my permissions.',
+          );
         }
         return;
       }
@@ -123,7 +132,10 @@ export default {
         await safeReply(interaction, 'Failed to add the color role. Please check my permissions.');
       }
     } catch (error) {
-      logger.error({ error, userId: interaction?.user?.id ?? 'unknown' }, 'Unexpected error in color command');
+      logger.error(
+        { error, userId: interaction?.user?.id ?? 'unknown' },
+        'Unexpected error in color command',
+      );
       await safeReply(interaction, 'An unexpected error occurred. Please try again later.');
     }
   },

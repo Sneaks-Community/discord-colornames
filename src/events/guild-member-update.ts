@@ -31,11 +31,17 @@ function cleanupStaleEntries(): void {
       removalPending.delete(key);
       cleaned++;
     }
-    logger.warn({ remainingSize: removalPending.size, removedCount: cleaned }, 'Enforced removalPending Map size limit');
+    logger.warn(
+      { remainingSize: removalPending.size, removedCount: cleaned },
+      'Enforced removalPending Map size limit',
+    );
   }
 
   if (cleaned > 0) {
-    logger.debug({ cleaned, currentSize: removalPending.size }, 'Cleaned stale removalPending entries');
+    logger.debug(
+      { cleaned, currentSize: removalPending.size },
+      'Cleaned stale removalPending entries',
+    );
   }
 }
 

@@ -8,10 +8,7 @@ import { logger } from './logger.js';
 
 // Initialize Discord client with required intents
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 });
 
 // Load commands on startup and cache on client for interaction handler
@@ -25,14 +22,19 @@ async function registerSlashCommands() {
   const commandData = [...commands.values()].map((cmd) => cmd.data.toJSON());
 
   try {
-    logger.info({ commandCount: commandData.length, serverId: config.serverId }, 'Registering application commands');
-
-    await rest.put(
-      Routes.applicationGuildCommands(config.clientId, config.serverId),
-      { body: commandData },
+    logger.info(
+      { commandCount: commandData.length, serverId: config.serverId },
+      'Registering application commands',
     );
 
-    logger.info({ registeredCount: commandData.length }, 'Application commands registered successfully');
+    await rest.put(Routes.applicationGuildCommands(config.clientId, config.serverId), {
+      body: commandData,
+    });
+
+    logger.info(
+      { registeredCount: commandData.length },
+      'Application commands registered successfully',
+    );
   } catch (error) {
     logger.error({ error }, 'Failed to register application commands');
     throw error;

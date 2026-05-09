@@ -26,12 +26,7 @@ function serializeError(value: unknown): unknown {
       stack: value.stack,
     };
   }
-  if (
-    typeof value === 'object' &&
-    value !== null &&
-    'code' in value &&
-    'message' in value
-  ) {
+  if (typeof value === 'object' && value !== null && 'code' in value && 'message' in value) {
     const obj = value as Record<string, unknown>;
     return {
       code: obj.code,
