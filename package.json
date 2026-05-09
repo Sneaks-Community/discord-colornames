@@ -1,6 +1,6 @@
 {
   "name": "discord-colornames",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A Discord bot that manages color-based roles in a Discord server.",
   "main": "dist/index.js",
   "type": "module",

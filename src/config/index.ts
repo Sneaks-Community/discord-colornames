@@ -89,7 +89,7 @@ export const config: BotConfig = {
   pinChannelId: parsed.PIN_CHANNEL_ID,
   serverId: parsed.SERVER_ID,
   token: parsed.DISCORD_TOKEN,
-  version: '4.0.0',
+  version: '4.0.1',
 };
 
 logger.info(
