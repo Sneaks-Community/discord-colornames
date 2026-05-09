@@ -44,7 +44,34 @@ Copy `.env.example` to `.env` and fill in the values:
 
 ## Getting Started
 
-### Local Development
+### Using Docker Compose (Recommended)
+
+The easiest way to run the bot is with the provided [`docker-compose.yml`](docker-compose.yml), which uses the pre-built image from GitHub Container Registry:
+
+```bash
+# Ensure you have a .env file configured (see Environment Variables below)
+docker compose up -d
+```
+
+### Building Your Own Docker Image
+
+If you prefer to build the image yourself:
+
+```bash
+docker build -t discord-colornames:dev .
+docker run --env-file .env discord-colornames:dev
+```
+
+Or using npm scripts:
+
+```bash
+npm run docker:build
+npm run docker:run
+```
+
+### Running Locally
+
+For local development with TypeScript watch mode:
 
 1. **Install dependencies:**
 
@@ -59,7 +86,7 @@ Copy `.env.example` to `.env` and fill in the values:
     # Edit .env with your Discord credentials
     ```
 
-3. **Build and run:**
+3. **Start the bot:**
 
     ```bash
     # Development mode (TypeScript watches for changes)
@@ -68,23 +95,6 @@ Copy `.env.example` to `.env` and fill in the values:
     # Or build once then start
     npm run build && npm start
     ```
-
-### Docker
-
-```bash
-# Build the image
-npm run docker:build
-
-# Run the container
-npm run docker:run
-```
-
-Or manually:
-
-```bash
-docker build -t discord-colornames:dev .
-docker run --env-file .env -p 3000:3000 discord-colornames:dev
-```
 
 ## Bot Permissions
 
