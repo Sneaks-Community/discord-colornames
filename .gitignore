@@ -1,2 +1,7 @@
-node_modules
-config.json
+node_modules/
+dist/
+.env
+.env.local
+*.log
+*.tsbuildinfo
+plans/

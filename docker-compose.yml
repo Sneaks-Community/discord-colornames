@@ -1,0 +1,26 @@
+# Docker Compose file for local development and testing.
+# For production deployment, use the Docker image directly or with an orchestrator.
+#
+# Usage:
+#   1. Copy .env.example to .env and fill in your values
+#   2. Run: docker compose up
+#
+# Health checks verify the bot's HTTP health endpoint (port 3000).
+# The restart policy ensures the bot recovers from crashes.
+
+services:
+  discord-colornames:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
