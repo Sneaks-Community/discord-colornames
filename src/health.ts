@@ -4,28 +4,36 @@ import { logger } from './logger.js';
 
 const PORT = config.healthPort;
 
-const server = http.createServer((_request, response) => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.end(
-    JSON.stringify({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-    }),
-  );
-});
+/**
+ * Create the health check HTTP server, wire up error handling, and start listening.
+ */
+function createHealthServer(): http.Server {
+  const healthServer = http.createServer((_request, response) => {
+    const now = new Date();
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.end(
+      JSON.stringify({
+        status: 'healthy',
+        timestamp: now.toISOString(),
+        uptime: process.uptime(),
+      }),
+    );
+  });
 
-server.on('error', (error: NodeJS.ErrnoException) => {
-  if (error.code === 'EADDRINUSE') {
-    logger.error({ port: PORT }, 'Health check port is already in use');
+  healthServer.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+      logger.error({ port: PORT }, 'Health check port is already in use');
+      process.exit(1);
+    }
+    logger.error({ error: error.message, port: PORT }, 'Health check server error');
     process.exit(1);
-  }
-  logger.error({ error: error.message, port: PORT }, 'Health check server error');
-  process.exit(1);
-});
+  });
 
-server.listen(PORT, '127.0.0.1', () => {
-  logger.info({ port: PORT }, 'Health check server started');
-});
+  healthServer.listen(PORT, '127.0.0.1', () => {
+    logger.info({ port: PORT }, 'Health check server started');
+  });
 
-export { server };
+  return healthServer;
+}
+
+export const server = createHealthServer();

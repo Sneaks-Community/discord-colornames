@@ -26,7 +26,7 @@ function cleanupStaleEntries(): void {
   // Enforce maximum size by removing oldest entries if exceeded
   if (removalPending.size > MAX_REMOVAL_PENDING_ENTRIES) {
     const entriesToRemove = removalPending.size - MAX_REMOVAL_PENDING_ENTRIES;
-    const keysToRemove = [...removalPending.keys()].slice(0, entriesToRemove);
+    const keysToRemove = removalPending.keys().toArray().slice(0, entriesToRemove);
     for (const key of keysToRemove) {
       removalPending.delete(key);
       cleaned++;
@@ -59,15 +59,15 @@ function startCleanupTimer(): void {
   cleanupTimer.unref(); // Don't prevent process exit
 }
 
-// Start periodic cleanup on module load
-startCleanupTimer();
-
 /**
  * Event handler for when a member's roles are updated.
  * Automatically removes color roles if the user loses their VIP/Booster status.
  */
 export default {
   execute(_oldMember: GuildMember, newMember: GuildMember) {
+    // Ensure the periodic cleanup timer is running (no-op if already started)
+    startCleanupTimer();
+
     const hadAllowedRole = config.allowedRoles.some((r) => _oldMember.roles.cache.has(r));
     const hasAllowedRole = config.allowedRoles.some((r) => newMember.roles.cache.has(r));
 
@@ -85,21 +85,21 @@ export default {
         'User lost allowed role, scheduling color role removal',
       );
 
-      const removalPromise = removeAllColorRoles(newMember)
-        .then((removed) => {
+      const removalPromise = (async () => {
+        try {
+          const removed = await removeAllColorRoles(newMember);
           if (removed.length > 0) {
             logger.debug(
               { removedRoles: removed.map((r) => r.name), userId },
               'Color roles removed',
             );
           }
-        })
-        .catch((error) => {
+        } catch (error) {
           logger.error({ error, userId }, 'Failed to remove color roles');
-        })
-        .finally(() => {
+        } finally {
           removalPending.delete(userId);
-        });
+        }
+      })();
 
       removalPending.set(userId, removalPromise);
 

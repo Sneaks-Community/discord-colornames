@@ -1,6 +1,5 @@
-import type { Client, Interaction } from 'discord.js';
+import type { Interaction } from 'discord.js';
 import { Events, MessageFlags } from 'discord.js';
-import type { CommandDefinition } from '../handlers/command-handler.js';
 import { logger } from '../logger.js';
 
 /**
@@ -8,7 +7,7 @@ import { logger } from '../logger.js';
  * Routes interactions to the appropriate command handlers.
  */
 export default {
-  execute(this: Client, interaction: Interaction) {
+  execute(interaction: Interaction) {
     void (async () => {
       if (!interaction.isChatInputCommand()) {
         // Log unknown interaction types for debugging and extensibility
@@ -22,7 +21,7 @@ export default {
       }
 
       // Retrieve commands from client cache (loaded at startup)
-      const commands = this.commands as Map<string, CommandDefinition>;
+      const commands = interaction.client.commands;
       const command = commands.get(interaction.commandName);
 
       if (!command) {
@@ -44,13 +43,15 @@ export default {
         );
         const errorMessage = {
           content: 'An error occurred while executing this command.',
-          flags: MessageFlags.Ephemeral,
+          flags: MessageFlags.Ephemeral as const,
         };
 
         try {
-          await (interaction.replied || interaction.deferred
-            ? interaction.followUp({ ...errorMessage, flags: MessageFlags.Ephemeral })
-            : interaction.reply({ ...errorMessage, flags: MessageFlags.Ephemeral }));
+          if (interaction.replied || interaction.deferred) {
+            await interaction.followUp(errorMessage);
+          } else {
+            await interaction.reply(errorMessage);
+          }
         } catch {
           // Ignore reply errors (already replied/expired)
         }

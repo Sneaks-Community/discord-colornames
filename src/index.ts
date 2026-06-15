@@ -18,8 +18,12 @@ logger.info({ commandCount: commands.size }, 'Commands loaded');
 
 // Register slash commands with Discord API at startup
 async function registerSlashCommands() {
-  const rest = new REST({ version: '10' }).setToken(config.token);
-  const commandData = [...commands.values()].map((cmd) => cmd.data.toJSON());
+  const rest = new REST({ version: '10' });
+  rest.setToken(config.token);
+  const commandData = commands
+    .values()
+    .map((cmd) => cmd.data.toJSON())
+    .toArray();
 
   try {
     logger.info(
@@ -111,7 +115,11 @@ async function start() {
   }
 }
 
-start().catch((error) => {
-  logger.error({ error }, 'Failed to start bot');
-  process.exit(1);
-});
+void (async () => {
+  try {
+    await start();
+  } catch (error) {
+    logger.error({ error }, 'Failed to start bot');
+    process.exit(1);
+  }
+})();

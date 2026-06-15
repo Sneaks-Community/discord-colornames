@@ -5,8 +5,6 @@ import type { BotConfig, ColorRoleEntry } from './types.js';
 import { VALID_LOG_LEVELS } from '../logger.js';
 import { logger } from '../logger.js';
 
-dotenv.config();
-
 /**
  * Zod schema for validating and parsing environment variables.
  */
@@ -45,8 +43,8 @@ function parseColorRoles(): ColorRoleEntry[] {
     .filter(([key]) => key.startsWith('COLOR_ROLE_'))
     .filter(([, value]) => value)
     .toSorted(([a], [b]) => {
-      const numA = Number.parseInt(a.replace('COLOR_ROLE_', ''), 10);
-      const numB = Number.parseInt(b.replace('COLOR_ROLE_', ''), 10);
+      const numA = Math.trunc(Number(a.replace('COLOR_ROLE_', '')));
+      const numB = Math.trunc(Number(b.replace('COLOR_ROLE_', '')));
       return numA - numB; // Sort numerically by the number after COLOR_ROLE_
     });
 
@@ -56,43 +54,55 @@ function parseColorRoles(): ColorRoleEntry[] {
   }));
 }
 
-// Parse and validate environment variables
-const parsed = configSchema.parse({
-  ACCESS_DENIED_DESCRIPTION: process.env.ACCESS_DENIED_DESCRIPTION,
-  ALLOWED_ROLES: process.env.ALLOWED_ROLES,
-  DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
-  DISCORD_TOKEN: process.env.DISCORD_TOKEN,
-  EMBED_COLOR: process.env.EMBED_COLOR,
-  HEALTH_PORT: process.env.HEALTH_PORT,
-  LOG_LEVEL: process.env.LOG_LEVEL,
-  PIN_CHANNEL_ID: process.env.PIN_CHANNEL_ID,
-  SERVER_ID: process.env.SERVER_ID,
-});
+/**
+ * Load environment variables, validate them, and build the bot configuration.
+ */
+function loadConfig(): BotConfig {
+  // Load environment variables from .env file
+  dotenv.config();
 
-// Validate bot token format
-validateBotToken(parsed.DISCORD_TOKEN);
+  // Parse and validate environment variables
+  const parsed = configSchema.parse({
+    ACCESS_DENIED_DESCRIPTION: process.env.ACCESS_DENIED_DESCRIPTION,
+    ALLOWED_ROLES: process.env.ALLOWED_ROLES,
+    DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
+    DISCORD_TOKEN: process.env.DISCORD_TOKEN,
+    EMBED_COLOR: process.env.EMBED_COLOR,
+    HEALTH_PORT: process.env.HEALTH_PORT,
+    LOG_LEVEL: process.env.LOG_LEVEL,
+    PIN_CHANNEL_ID: process.env.PIN_CHANNEL_ID,
+    SERVER_ID: process.env.SERVER_ID,
+  });
 
-const colorRoles = parseColorRoles();
+  // Validate bot token format
+  validateBotToken(parsed.DISCORD_TOKEN);
 
-const allowedRolesRaw = parsed.ALLOWED_ROLES.split(',')
-  .map((r) => r.trim())
-  .filter(Boolean);
+  const colorRoles = parseColorRoles();
 
-export const config: BotConfig = {
-  accessDeniedDescription: parsed.ACCESS_DENIED_DESCRIPTION,
-  allowedRoles: allowedRolesRaw,
-  clientId: parsed.DISCORD_CLIENT_ID,
-  colorRoles,
-  embedColor: parsed.EMBED_COLOR,
-  healthPort: parsed.HEALTH_PORT,
-  logLevel: parsed.LOG_LEVEL,
-  pinChannelId: parsed.PIN_CHANNEL_ID,
-  serverId: parsed.SERVER_ID,
-  token: parsed.DISCORD_TOKEN,
-  version: '4.0.1',
-};
+  const allowedRolesRaw = parsed.ALLOWED_ROLES.split(',')
+    .map((r) => r.trim())
+    .filter(Boolean);
 
-logger.info(
-  { clientId: config.clientId, serverId: config.serverId },
-  'Configuration parsed successfully',
-);
+  const botConfig: BotConfig = {
+    accessDeniedDescription: parsed.ACCESS_DENIED_DESCRIPTION,
+    allowedRoles: allowedRolesRaw,
+    clientId: parsed.DISCORD_CLIENT_ID,
+    colorRoles,
+    embedColor: parsed.EMBED_COLOR,
+    healthPort: parsed.HEALTH_PORT,
+    logLevel: parsed.LOG_LEVEL,
+    pinChannelId: parsed.PIN_CHANNEL_ID,
+    serverId: parsed.SERVER_ID,
+    token: parsed.DISCORD_TOKEN,
+    version: '4.0.1',
+  };
+
+  logger.info(
+    { clientId: botConfig.clientId, serverId: botConfig.serverId },
+    'Configuration parsed successfully',
+  );
+
+  return botConfig;
+}
+
+export const config: BotConfig = loadConfig();

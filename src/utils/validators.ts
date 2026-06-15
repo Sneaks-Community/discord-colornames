@@ -5,7 +5,7 @@
  * @returns The parsed number, or undefined if invalid
  */
 export function validateIntegerInput(value: string, max: number): number | undefined {
-  const number_ = Number.parseInt(value, 10);
+  const number_ = Math.trunc(Number(value));
   if (Number.isNaN(number_) || number_ < 0 || number_ > max) {
     return undefined;
   }

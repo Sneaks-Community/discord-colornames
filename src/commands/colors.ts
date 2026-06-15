@@ -3,10 +3,11 @@ import { SlashCommandBuilder } from 'discord.js';
 import { buildAccessDeniedEmbed, buildColorListEmbed } from '../utils/embed-builders.js';
 import { hasAllowedRole } from '../utils/role-utilities.js';
 
+const builder = new SlashCommandBuilder();
+const data = builder.setName('colors').setDescription('List all available color roles');
+
 export default {
-  data: new SlashCommandBuilder()
-    .setName('colors')
-    .setDescription('List all available color roles'),
+  data,
   async execute(interaction: ChatInputCommandInteraction) {
     const member = interaction.member as GuildMember;
 

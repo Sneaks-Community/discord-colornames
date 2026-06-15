@@ -20,7 +20,8 @@ export function buildColorListEmbed(): EmbedBuilder {
     index++;
   }
 
-  const embed = new EmbedBuilder()
+  const builder = new EmbedBuilder();
+  const embed = builder
     .setTitle('Color Roles')
     .setDescription(
       `Please select a color from the list below.\n\n${list}To set a color, use \`/color <Color Number>\``,
@@ -36,7 +37,8 @@ export function buildColorListEmbed(): EmbedBuilder {
  * @returns The constructed EmbedBuilder
  */
 export function buildAccessDeniedEmbed(_member: GuildMember): EmbedBuilder {
-  return new EmbedBuilder()
+  const builder = new EmbedBuilder();
+  return builder
     .setTitle('Access Denied')
     .setDescription(config.accessDeniedDescription)
     .setColor(config.embedColor);

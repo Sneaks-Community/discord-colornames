@@ -20,26 +20,35 @@ async function safeReply(
   ephemeral = true,
 ): Promise<void> {
   try {
-    await (interaction.replied || interaction.deferred
-      ? interaction.followUp({ content, flags: ephemeral ? MessageFlags.Ephemeral : undefined })
-      : interaction.reply({ content, flags: ephemeral ? MessageFlags.Ephemeral : undefined }));
+    const options = {
+      content,
+      flags: ephemeral ? (MessageFlags.Ephemeral as const) : undefined,
+    };
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp(options);
+    } else {
+      await interaction.reply(options);
+    }
   } catch {
     // Ignore errors from already replied or expired interactions
   }
 }
 
+const builder = new SlashCommandBuilder();
+const data = builder
+  .setName('color')
+  .setDescription('Set your color role')
+  .addIntegerOption((option) =>
+    option
+      .setName('number')
+      .setDescription('The number of the color to select (0 to reset)')
+      .setRequired(true)
+      .setMinValue(0)
+      .setMaxValue(config.colorRoles.length + 1),
+  );
+
 export default {
-  data: new SlashCommandBuilder()
-    .setName('color')
-    .setDescription('Set your color role')
-    .addIntegerOption((option) =>
-      option
-        .setName('number')
-        .setDescription('The number of the color to select (0 to reset)')
-        .setRequired(true)
-        .setMinValue(0)
-        .setMaxValue(config.colorRoles.length + 1),
-    ),
+  data,
   async execute(interaction: ChatInputCommandInteraction) {
     try {
       const member = interaction.member as GuildMember;
@@ -95,13 +104,14 @@ export default {
       }
 
       const roleId = getColorRoleIdByIndex(parsedNumber);
-      const roleName = getColorRoleNameByIndex(parsedNumber);
 
       if (!roleId) {
         const message = 'Invalid color number. Use /colors to see available options.';
         await safeReply(interaction, message);
         return;
       }
+
+      const roleName = getColorRoleNameByIndex(parsedNumber);
 
       // Check if user already has this role
       if (member.roles.cache.has(roleId)) {
