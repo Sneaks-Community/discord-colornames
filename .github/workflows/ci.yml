@@ -21,16 +21,19 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: npm audit (fail on high vulnerabilities)
+        run: npm audit --audit-level=high
 
       - name: Lint
         run: npm run lint
@@ -45,23 +48,19 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: npm audit (fail on high vulnerabilities)
-        run: npm audit --audit-level=high
-
-  # Run Docker build test
   docker-build:
     name: Docker Build
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@v4.1.0
 
       - name: Build Docker image (production stage)
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v7.2.0
         with:
           context: .
           push: false
