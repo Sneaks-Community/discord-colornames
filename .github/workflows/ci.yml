@@ -46,7 +46,7 @@ jobs:
         run: npm run build
 
       - name: npm audit (fail on high vulnerabilities)
-        run: npm audit --audit-level=critical
+        run: npm audit --audit-level=high
 
   # Run Docker build test
   docker-build:
