@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
-import { SlashCommandBuilder, PermissionsBitField } from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 import { config } from '../config/index.js';
 import { logger } from '../logger.js';
 import { safeReply } from '../utils/interaction.js';
@@ -131,6 +131,4 @@ export default {
       });
     }
   },
-
-  permissions: [PermissionsBitField.Flags.ManageRoles],
 };
