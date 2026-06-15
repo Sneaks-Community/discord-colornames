@@ -1,5 +1,6 @@
 import type { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { MessageFlags } from 'discord.js';
+import { logger } from '../logger.js';
 
 interface SafeReplyOptions {
   content?: string;
@@ -29,7 +30,9 @@ export async function safeReply(
     } else {
       await interaction.reply(payload);
     }
-  } catch {
-    // Ignore errors from already replied or expired interactions
+  } catch (error) {
+    // Expected for already-replied or expired interactions; log at debug so genuine
+    // delivery failures remain observable without adding noise at the default level.
+    logger.debug({ error }, 'safeReply failed to deliver interaction response');
   }
 }
