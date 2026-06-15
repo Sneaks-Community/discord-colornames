@@ -96,10 +96,8 @@ process.on('unhandledRejection', (reason: unknown) => {
 });
 
 process.on('uncaughtException', (error: unknown) => {
-  logger.error({ error }, 'Uncaught exception');
-  shutdown();
-  // Re-throw to let Node exit with non-zero
-  throw error;
+  logger.fatal({ error }, 'Uncaught exception, exiting');
+  process.exit(1);
 });
 
 // Login to Discord
