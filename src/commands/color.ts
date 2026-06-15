@@ -1,7 +1,8 @@
 import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
-import { SlashCommandBuilder, MessageFlags, PermissionsBitField } from 'discord.js';
+import { SlashCommandBuilder, PermissionsBitField } from 'discord.js';
 import { config } from '../config/index.js';
 import { logger } from '../logger.js';
+import { safeReply } from '../utils/interaction.js';
 import {
   hasAllowedRole,
   getColorRoleIdByIndex,
@@ -9,30 +10,6 @@ import {
   removeAllColorRoles,
 } from '../utils/role-utilities.js';
 import { validateIntegerInput } from '../utils/validators.js';
-
-/**
- * Safely reply to an interaction only if it hasn't been replied to or deferred yet.
- * Wraps the reply in try-catch to handle edge cases like already replied or expired interactions.
- */
-async function safeReply(
-  interaction: ChatInputCommandInteraction,
-  content: string,
-  ephemeral = true,
-): Promise<void> {
-  try {
-    const options = {
-      content,
-      flags: ephemeral ? (MessageFlags.Ephemeral as const) : undefined,
-    };
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(options);
-    } else {
-      await interaction.reply(options);
-    }
-  } catch {
-    // Ignore errors from already replied or expired interactions
-  }
-}
 
 const builder = new SlashCommandBuilder();
 const data = builder
@@ -60,14 +37,16 @@ export default {
       );
 
       if (number === null || number === undefined) {
-        await safeReply(interaction, 'Please provide a valid number.');
+        await safeReply(interaction, { content: 'Please provide a valid number.' });
         return;
       }
 
       // Check if user has allowed role
       if (!hasAllowedRole(member)) {
         logger.debug({ hasAllowedRole: false, userId: interaction.user.id }, 'Access denied');
-        await safeReply(interaction, 'You do not have permission to use this command.');
+        await safeReply(interaction, {
+          content: 'You do not have permission to use this command.',
+        });
         return;
       }
 
@@ -79,16 +58,15 @@ export default {
             { userId: interaction.user.id, username: interaction.user.username },
             'Color roles reset',
           );
-          await safeReply(interaction, 'All color roles have been removed.');
+          await safeReply(interaction, { content: 'All color roles have been removed.' });
         } catch (error) {
           logger.error(
             { error, userId: interaction.user.id },
             'Failed to remove color roles on reset',
           );
-          await safeReply(
-            interaction,
-            'Failed to remove color roles. Please check my permissions.',
-          );
+          await safeReply(interaction, {
+            content: 'Failed to remove color roles. Please check my permissions.',
+          });
         }
         return;
       }
@@ -99,7 +77,7 @@ export default {
 
       if (!parsedNumber) {
         const message = `Please enter a valid number between 1 and ${maxRoles}. Use /colors to see the list.`;
-        await safeReply(interaction, message);
+        await safeReply(interaction, { content: message });
         return;
       }
 
@@ -107,7 +85,7 @@ export default {
 
       if (!roleId) {
         const message = 'Invalid color number. Use /colors to see available options.';
-        await safeReply(interaction, message);
+        await safeReply(interaction, { content: message });
         return;
       }
 
@@ -115,7 +93,7 @@ export default {
 
       // Check if user already has this role
       if (member.roles.cache.has(roleId)) {
-        await safeReply(interaction, `You already have the ${roleName} color role!`);
+        await safeReply(interaction, { content: `You already have the ${roleName} color role!` });
         return;
       }
 
@@ -124,29 +102,33 @@ export default {
         await removeAllColorRoles(member);
         const guild = interaction.guild;
         if (!guild) {
-          await safeReply(interaction, 'Error: Could not access guild.');
+          await safeReply(interaction, { content: 'Error: Could not access guild.' });
           return;
         }
         const role = guild.roles.cache.get(roleId);
         if (!role) {
-          await safeReply(interaction, 'Error: Color role not found.');
+          await safeReply(interaction, { content: 'Error: Color role not found.' });
           return;
         }
 
         await member.roles.add(role);
         logger.debug({ roleName, userId: interaction.user.id }, 'Color role set');
 
-        await safeReply(interaction, `Successfully set your color to ${roleName}!`);
+        await safeReply(interaction, { content: `Successfully set your color to ${roleName}!` });
       } catch (error) {
         logger.error({ error, userId: interaction.user.id }, 'Failed to add color role');
-        await safeReply(interaction, 'Failed to add the color role. Please check my permissions.');
+        await safeReply(interaction, {
+          content: 'Failed to add the color role. Please check my permissions.',
+        });
       }
     } catch (error) {
       logger.error(
         { error, userId: interaction?.user?.id ?? 'unknown' },
         'Unexpected error in color command',
       );
-      await safeReply(interaction, 'An unexpected error occurred. Please try again later.');
+      await safeReply(interaction, {
+        content: 'An unexpected error occurred. Please try again later.',
+      });
     }
   },
 

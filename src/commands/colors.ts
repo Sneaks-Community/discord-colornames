@@ -1,6 +1,7 @@
 import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { SlashCommandBuilder } from 'discord.js';
 import { buildAccessDeniedEmbed, buildColorListEmbed } from '../utils/embed-builders.js';
+import { safeReply } from '../utils/interaction.js';
 import { hasAllowedRole } from '../utils/role-utilities.js';
 
 const builder = new SlashCommandBuilder();
@@ -14,11 +15,11 @@ export default {
     // Check if user has allowed role
     if (!hasAllowedRole(member)) {
       const embed = buildAccessDeniedEmbed(member);
-      await interaction.reply({ embeds: [embed] });
+      await safeReply(interaction, { embeds: [embed], ephemeral: false });
       return;
     }
 
     const embed = buildColorListEmbed();
-    await interaction.reply({ embeds: [embed] });
+    await safeReply(interaction, { embeds: [embed], ephemeral: false });
   },
 };
