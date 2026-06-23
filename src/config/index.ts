@@ -94,7 +94,7 @@ function loadConfig(): BotConfig {
     pinChannelId: parsed.PIN_CHANNEL_ID,
     serverId: parsed.SERVER_ID,
     token: parsed.DISCORD_TOKEN,
-    version: '4.1.0',
+    version: '4.2.0',
   };
 
   logger.info(
