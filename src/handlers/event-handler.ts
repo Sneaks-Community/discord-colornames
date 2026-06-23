@@ -5,7 +5,7 @@ import readyEvent from '../events/ready.js';
 import { logger } from '../logger.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type EventCallback = (this: Client, ...args: any[]) => any;
+type EventCallback = (this: Client, ...arguments_: any[]) => any;
 
 type EventDefinition = {
   name: EventsEnum;
@@ -37,6 +37,6 @@ export function registerEvents(client: Client) {
       client.on(eventName, boundExecute);
     }
 
-    logger.info({ eventName: String(eventHandler.name), once: isOnce }, 'Event handler registered');
+    logger.info({ eventName: eventHandler.name, once: isOnce }, 'Event handler registered');
   }
 }

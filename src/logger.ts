@@ -27,11 +27,11 @@ function serializeError(value: unknown): unknown {
     };
   }
   if (typeof value === 'object' && value !== null && 'code' in value && 'message' in value) {
-    const obj = value as Record<string, unknown>;
+    const object = value as Record<string, unknown>;
     return {
-      code: obj.code,
-      message: obj.message,
-      ...obj,
+      code: object.code,
+      message: object.message,
+      ...object,
     };
   }
   return value;

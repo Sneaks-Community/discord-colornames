@@ -14,7 +14,7 @@ const REMOVAL_PENDING_TIMEOUT = 5 * 60 * 1000;
 const MAX_REMOVAL_PENDING_ENTRIES = 1000;
 
 // Periodic cleanup interval (every 1 minute) to remove stale entries
-let cleanupTimer: NodeJS.Timeout | undefined;
+const cleanupState: { timer: NodeJS.Timeout | undefined } = { timer: undefined };
 
 /**
  * Clean up stale entries from the removalPending Map.
@@ -50,13 +50,13 @@ function cleanupStaleEntries(): void {
  * The timer is unref'd so it won't prevent process exit.
  */
 function startCleanupTimer(): void {
-  if (cleanupTimer) return; // Already running
+  if (cleanupState.timer) return; // Already running
 
-  cleanupTimer = setInterval(() => {
+  cleanupState.timer = setInterval(() => {
     cleanupStaleEntries();
   }, 60_000); // Every 1 minute
 
-  cleanupTimer.unref(); // Don't prevent process exit
+  cleanupState.timer.unref(); // Don't prevent process exit
 }
 
 /**
@@ -68,11 +68,11 @@ export default {
     // Ensure the periodic cleanup timer is running (no-op if already started)
     startCleanupTimer();
 
-    const hadAllowedRole = config.allowedRoles.some((r) => _oldMember.roles.cache.has(r));
+    const isHadAllowedRole = config.allowedRoles.some((r) => _oldMember.roles.cache.has(r));
     const hasAllowedRole = config.allowedRoles.some((r) => newMember.roles.cache.has(r));
 
     // User had an allowed role before but doesn't have one now
-    if (hadAllowedRole && !hasAllowedRole) {
+    if (isHadAllowedRole && !hasAllowedRole) {
       const userId = newMember.user.id;
 
       // Debounce: skip if already pending removal for this user

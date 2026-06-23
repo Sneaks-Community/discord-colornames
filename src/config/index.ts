@@ -43,9 +43,9 @@ function parseColorRoles(): ColorRoleEntry[] {
     .filter(([key]) => key.startsWith('COLOR_ROLE_'))
     .filter(([, value]) => value)
     .toSorted(([a], [b]) => {
-      const numA = Math.trunc(Number(a.replace('COLOR_ROLE_', '')));
-      const numB = Math.trunc(Number(b.replace('COLOR_ROLE_', '')));
-      return numA - numB; // Sort numerically by the number after COLOR_ROLE_
+      const numberA = Math.trunc(Number(a.replace('COLOR_ROLE_', '')));
+      const numberB = Math.trunc(Number(b.replace('COLOR_ROLE_', '')));
+      return numberA - numberB; // Sort numerically by the number after COLOR_ROLE_
     });
 
   return colorRoleEntries.map(([key, value]) => ({

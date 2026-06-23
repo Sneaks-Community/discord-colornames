@@ -22,7 +22,7 @@ async function registerSlashCommands() {
   rest.setToken(config.token);
   const commandData = commands
     .values()
-    .map((cmd) => cmd.data.toJSON())
+    .map((command) => command.data.toJSON())
     .toArray();
 
   try {
@@ -49,12 +49,12 @@ async function registerSlashCommands() {
 registerEvents(client);
 
 // Shutdown guard to prevent double-execution from simultaneous signals
-let isShuttingDown = false;
+const shutdownState = { isShuttingDown: false };
 
 // Handle graceful shutdown with timeout protection
 async function shutdown() {
-  if (isShuttingDown) return;
-  isShuttingDown = true;
+  if (shutdownState.isShuttingDown) return;
+  shutdownState.isShuttingDown = true;
 
   logger.info('Shutting down...');
 
