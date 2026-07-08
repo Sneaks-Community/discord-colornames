@@ -12,9 +12,7 @@ import { logger } from '../logger.js';
  * All possible return types from SlashCommandBuilder depending on usage.
  */
 type SlashCommandData =
-  | SlashCommandBuilder
-  | SlashCommandOptionsOnlyBuilder
-  | SlashCommandSubcommandsOnlyBuilder;
+  SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder;
 
 /**
  * Interface for all command definitions.
