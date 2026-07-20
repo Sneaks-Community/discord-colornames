@@ -19,7 +19,7 @@ A Discord bot that manages color-based roles in a Discord server.
 
 ## Requirements
 
-- [Node.js](https://nodejs.org) >= 24.0.0
+- [Node.js](https://nodejs.org) >= 26.0.0
 - A [Discord Bot](https://discordjs.guide/preparations/setting-up-a-bot-application.html) with the following Intents enabled:
   - `Guilds`
   - `Guild Members`
