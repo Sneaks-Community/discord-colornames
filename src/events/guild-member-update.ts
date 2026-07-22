@@ -87,11 +87,17 @@ export default {
 
       const removalPromise = (async () => {
         try {
-          const removed = await removeAllColorRoles(newMember);
+          const { failed, removed } = await removeAllColorRoles(newMember);
           if (removed.length > 0) {
             logger.debug(
               { removedRoles: removed.map((r) => r.name), userId },
               'Color roles removed',
+            );
+          }
+          if (failed.length > 0) {
+            logger.error(
+              { failedRoles: failed.map((r) => r.name), userId },
+              'Failed to remove some color roles after user lost allowed role',
             );
           }
         } catch (error) {

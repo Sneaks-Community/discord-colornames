@@ -52,13 +52,25 @@ export function hasAllowedRole(member: GuildMember): boolean {
 }
 
 /**
- * Remove all color roles from a member.
- * Batches removal into a single API call for efficiency and atomicity.
- * @param member - The Discord member
- * @returns Array of roles that were removed
+ * Result of a color-role removal attempt.
+ * `failed` is non-empty when Discord rejected one or more removals, so callers
+ * can distinguish real success from a partial/total failure.
  */
-export async function removeAllColorRoles(member: GuildMember): Promise<Role[]> {
+export interface RemoveColorRolesResult {
+  failed: Role[];
+  removed: Role[];
+}
+
+/**
+ * Remove all color roles from a member.
+ * Batches removal into a single API call for efficiency and atomicity, falling
+ * back to per-role removal if the batch call fails.
+ * @param member - The Discord member
+ * @returns The roles that were removed and the roles that could not be removed
+ */
+export async function removeAllColorRoles(member: GuildMember): Promise<RemoveColorRolesResult> {
   const removed: Role[] = [];
+  const failed: Role[] = [];
   const colorRoleIds = getColorRoleIds();
 
   // Collect all color roles the member currently has
@@ -67,19 +79,19 @@ export async function removeAllColorRoles(member: GuildMember): Promise<Role[]> 
     .filter((role): role is Role => role !== undefined && member.roles.cache.has(role.id));
 
   if (rolesToRemove.length === 0) {
-    return removed;
+    return { failed, removed };
   }
 
   // Remove all roles in a single API call for atomicity
   try {
     await member.roles.remove(rolesToRemove);
-    return rolesToRemove;
+    return { failed, removed: rolesToRemove };
   } catch {
     logger.error(
       { roleCount: rolesToRemove.length, userId: member.user.id },
       'Failed to remove color roles',
     );
-    // Fallback: remove roles one by one
+    // Fallback: remove roles one by one so a single bad role doesn't block others
     for (const role of rolesToRemove) {
       try {
         await member.roles.remove(role);
@@ -89,8 +101,9 @@ export async function removeAllColorRoles(member: GuildMember): Promise<Role[]> 
           { error: roleError, roleId: role.id },
           'Failed to remove individual color role',
         );
+        failed.push(role);
       }
     }
-    return removed;
+    return { failed, removed };
   }
 }

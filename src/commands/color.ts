@@ -52,22 +52,22 @@ export default {
 
       // Handle color reset (0)
       if (number === 0) {
-        try {
-          await removeAllColorRoles(member);
-          logger.debug(
-            { userId: interaction.user.id, username: interaction.user.username },
-            'Color roles reset',
-          );
-          await safeReply(interaction, { content: 'All color roles have been removed.' });
-        } catch (error) {
+        const { failed } = await removeAllColorRoles(member);
+        if (failed.length > 0) {
           logger.error(
-            { error, userId: interaction.user.id },
+            { failedRoles: failed.map((r) => r.name), userId: interaction.user.id },
             'Failed to remove color roles on reset',
           );
           await safeReply(interaction, {
             content: 'Failed to remove color roles. Please check my permissions.',
           });
+          return;
         }
+        logger.debug(
+          { userId: interaction.user.id, username: interaction.user.username },
+          'Color roles reset',
+        );
+        await safeReply(interaction, { content: 'All color roles have been removed.' });
         return;
       }
 
@@ -99,7 +99,17 @@ export default {
 
       // Remove all existing color roles and add the new one
       try {
-        await removeAllColorRoles(member);
+        const { failed } = await removeAllColorRoles(member);
+        if (failed.length > 0) {
+          logger.error(
+            { failedRoles: failed.map((r) => r.name), userId: interaction.user.id },
+            'Failed to remove existing color roles before setting new one',
+          );
+          await safeReply(interaction, {
+            content: 'Failed to update your color roles. Please check my permissions.',
+          });
+          return;
+        }
         const guild = interaction.guild;
         if (!guild) {
           await safeReply(interaction, { content: 'Error: Could not access guild.' });
