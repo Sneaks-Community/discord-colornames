@@ -1,5 +1,3 @@
-// Load environment variables from .env file
-import dotenv from 'dotenv';
 import { z } from 'zod';
 import type { BotConfig, ColorRoleEntry } from './types.js';
 import { VALID_LOG_LEVELS } from '../logger.js';
@@ -58,8 +56,8 @@ function parseColorRoles(): ColorRoleEntry[] {
  * Load environment variables, validate them, and build the bot configuration.
  */
 function loadConfig(): BotConfig {
-  // Load environment variables from .env file
-  dotenv.config();
+  // Environment variables are loaded via ../environment.js (imported
+  // transitively by ../logger.js) before this module executes.
 
   // Parse and validate environment variables
   const parsed = configSchema.parse({
@@ -96,6 +94,10 @@ function loadConfig(): BotConfig {
     token: parsed.DISCORD_TOKEN,
     version: '4.2.0',
   };
+
+  // Apply the validated log level so the .env value is authoritative even when
+  // the logger was constructed before .env parsing completed.
+  logger.level = botConfig.logLevel;
 
   logger.info(
     { clientId: botConfig.clientId, serverId: botConfig.serverId },

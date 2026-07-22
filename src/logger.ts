@@ -1,3 +1,5 @@
+// Ensure .env is loaded before reading process.env below.
+import './environment.js';
 import pino from 'pino';
 
 /**
