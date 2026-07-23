@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import type { BotConfig, ColorRoleEntry } from './types.js';
-import { VALID_LOG_LEVELS } from '../logger.js';
 import { logger } from '../logger.js';
 
 /**
@@ -15,7 +14,6 @@ const configSchema = z.object({
   DISCORD_TOKEN: z.string().min(1, 'DISCORD_TOKEN is required'),
   EMBED_COLOR: z.coerce.number().int().min(0).max(16_777_215).default(299_410),
   HEALTH_PORT: z.coerce.number().int().positive().default(3000),
-  LOG_LEVEL: z.enum(VALID_LOG_LEVELS).default('info'),
   PIN_CHANNEL_ID: z.string().optional(),
   SERVER_ID: z.string().min(1, 'SERVER_ID is required'),
 });
@@ -64,7 +62,6 @@ function loadConfig(): BotConfig {
     DISCORD_TOKEN: process.env.DISCORD_TOKEN,
     EMBED_COLOR: process.env.EMBED_COLOR,
     HEALTH_PORT: process.env.HEALTH_PORT,
-    LOG_LEVEL: process.env.LOG_LEVEL,
     PIN_CHANNEL_ID: process.env.PIN_CHANNEL_ID,
     SERVER_ID: process.env.SERVER_ID,
   });
@@ -85,16 +82,10 @@ function loadConfig(): BotConfig {
     colorRoles,
     embedColor: parsed.EMBED_COLOR,
     healthPort: parsed.HEALTH_PORT,
-    logLevel: parsed.LOG_LEVEL,
     pinChannelId: parsed.PIN_CHANNEL_ID,
     serverId: parsed.SERVER_ID,
     token: parsed.DISCORD_TOKEN,
-    version: '4.2.0',
   };
-
-  // Apply the validated log level so the .env value is authoritative even when
-  // the logger was constructed before .env parsing completed.
-  logger.level = botConfig.logLevel;
 
   logger.info(
     { clientId: botConfig.clientId, serverId: botConfig.serverId },

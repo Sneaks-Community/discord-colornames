@@ -8,9 +8,7 @@ export interface BotConfig {
   clientId: string;
   serverId: string;
   embedColor: number;
-  logLevel: string;
   healthPort: number;
-  version: string;
   colorRoles: ColorRoleEntry[];
   allowedRoles: string[];
   pinChannelId?: string;
