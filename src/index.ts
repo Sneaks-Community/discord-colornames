@@ -52,7 +52,7 @@ registerEvents(client);
 const shutdownState = { isShuttingDown: false };
 
 // Handle graceful shutdown with timeout protection
-async function shutdown() {
+async function shutdown(exitCode = 0) {
   if (shutdownState.isShuttingDown) return;
   shutdownState.isShuttingDown = true;
 
@@ -69,7 +69,7 @@ async function shutdown() {
   ]);
 
   logger.info('Shutdown complete');
-  process.exit(0);
+  process.exit(exitCode);
 }
 
 async function performShutdown() {
@@ -109,15 +109,9 @@ async function start() {
     logger.info('Bot logged in successfully');
   } catch (error) {
     logger.error({ error }, 'Failed to start bot');
-    shutdown();
+    // Exit non-zero so orchestrators/monitoring treat startup failure as a failure
+    await shutdown(1);
   }
 }
 
-void (async () => {
-  try {
-    await start();
-  } catch (error) {
-    logger.error({ error }, 'Failed to start bot');
-    process.exit(1);
-  }
-})();
+void start();
