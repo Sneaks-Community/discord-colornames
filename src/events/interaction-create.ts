@@ -11,7 +11,11 @@ export default {
     void (async () => {
       if (!interaction.isChatInputCommand()) {
         // Log unknown interaction types for debugging and extensibility
-        if (interaction.isButton() || interaction.isSelectMenu() || interaction.isModalSubmit()) {
+        if (
+          interaction.isButton() ||
+          interaction.isAnySelectMenu() ||
+          interaction.isModalSubmit()
+        ) {
           logger.warn(
             { customId: interaction.customId, interactionType: interaction.type },
             'Unhandled interaction type',
