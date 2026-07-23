@@ -21,7 +21,7 @@ export function buildColorListEmbed(): EmbedBuilder {
 
   const builder = new EmbedBuilder();
   const embed = builder
-    .setTitle('Color Roles')
+    .setTitle(config.colorListTitle)
     .setDescription(
       `Please select a color from the list below.\n\n${list}To set a color, use \`/color <Color Number>\``,
     )

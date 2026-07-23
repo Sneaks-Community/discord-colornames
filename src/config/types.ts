@@ -10,6 +10,7 @@ export interface BotConfig {
   embedColor: number;
   healthPort: number;
   colorRoles: ColorRoleEntry[];
+  colorListTitle: string;
   allowedRoles: string[];
   pinChannelId?: string;
   accessDeniedDescription: string;

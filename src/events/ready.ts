@@ -89,7 +89,8 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
     // pinsResponse.items is a read-only array of MessagePin objects
     // Each MessagePin has a `message` property containing the actual Message
     const existingPin = [...pinsResponse.items].find(
-      (pin) => pin.message.embeds.length > 0 && pin.message.embeds[0].title === 'Color Roles',
+      (pin) =>
+        pin.message.embeds.length > 0 && pin.message.embeds[0].title === config.colorListTitle,
     );
 
     const embed = buildColorListEmbed();

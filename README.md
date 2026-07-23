@@ -36,6 +36,7 @@ Copy `.env.example` to `.env` and fill in the values:
 | `SERVER_ID` | Guild ID where commands are registered | `987654321098765432` |
 | `PIN_CHANNEL_ID` | Channel ID to pin the color list message to (optional) | `123456789012345678` |
 | `EMBED_COLOR` | Decimal color for embeds | `299410` |
+| `COLOR_LIST_TITLE` | Title of the color list embed (also used to detect the pinned message) | `Color Roles` |
 | `LOG_LEVEL` | Log level (`fatal`, `error`, `warn`, `info`, `debug`, `trace`) | `info` |
 | `HEALTH_PORT` | Port for the health check HTTP server | `3000` |
 | `ACCESS_DENIED_DESCRIPTION` | Message shown to users without allowed roles (supports markdown) | `Sorry, this command is for VIPs and Nitro Boosters only.` |

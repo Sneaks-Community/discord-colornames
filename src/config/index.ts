@@ -10,6 +10,7 @@ const configSchema = z.object({
     .string()
     .default('Sorry, this command is for VIPs and Nitro Boosters only.'),
   ALLOWED_ROLES: z.string().default(''),
+  COLOR_LIST_TITLE: z.string().min(1).max(256).default('Color Roles'),
   DISCORD_CLIENT_ID: z.string().min(1, 'DISCORD_CLIENT_ID is required'),
   DISCORD_TOKEN: z.string().min(1, 'DISCORD_TOKEN is required'),
   EMBED_COLOR: z.coerce.number().int().min(0).max(16_777_215).default(299_410),
@@ -58,6 +59,7 @@ function loadConfig(): BotConfig {
   const parsed = configSchema.parse({
     ACCESS_DENIED_DESCRIPTION: process.env.ACCESS_DENIED_DESCRIPTION,
     ALLOWED_ROLES: process.env.ALLOWED_ROLES,
+    COLOR_LIST_TITLE: process.env.COLOR_LIST_TITLE,
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
     DISCORD_TOKEN: process.env.DISCORD_TOKEN,
     EMBED_COLOR: process.env.EMBED_COLOR,
@@ -79,6 +81,7 @@ function loadConfig(): BotConfig {
     accessDeniedDescription: parsed.ACCESS_DENIED_DESCRIPTION,
     allowedRoles: allowedRolesRaw,
     clientId: parsed.DISCORD_CLIENT_ID,
+    colorListTitle: parsed.COLOR_LIST_TITLE,
     colorRoles,
     embedColor: parsed.EMBED_COLOR,
     healthPort: parsed.HEALTH_PORT,
