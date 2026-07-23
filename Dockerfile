@@ -25,5 +25,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Run as non-root user
 USER appuser
 
-EXPOSE 3000
 CMD ["node", "dist/index.js"]

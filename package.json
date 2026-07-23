@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "dev": "tsc --watch",
     "docker:build": "docker build -t discord-colornames:dev .",
-    "docker:run": "docker run --env-file .env -p 3000:3000 discord-colornames:dev",
+    "docker:run": "docker run --env-file .env discord-colornames:dev",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
