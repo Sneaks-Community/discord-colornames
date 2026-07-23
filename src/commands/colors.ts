@@ -15,7 +15,7 @@ export default {
     // Check if user has allowed role
     if (!hasAllowedRole(member)) {
       const embed = buildAccessDeniedEmbed(member);
-      await safeReply(interaction, { embeds: [embed], ephemeral: false });
+      await safeReply(interaction, { embeds: [embed], ephemeral: true });
       return;
     }
 
