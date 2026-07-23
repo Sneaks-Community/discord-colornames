@@ -13,7 +13,7 @@ const configSchema = z.object({
   ALLOWED_ROLES: z.string().default(''),
   DISCORD_CLIENT_ID: z.string().min(1, 'DISCORD_CLIENT_ID is required'),
   DISCORD_TOKEN: z.string().min(1, 'DISCORD_TOKEN is required'),
-  EMBED_COLOR: z.coerce.number().int().positive().default(299_410),
+  EMBED_COLOR: z.coerce.number().int().min(0).max(16_777_215).default(299_410),
   HEALTH_PORT: z.coerce.number().int().positive().default(3000),
   LOG_LEVEL: z.enum(VALID_LOG_LEVELS).default('info'),
   PIN_CHANNEL_ID: z.string().optional(),
