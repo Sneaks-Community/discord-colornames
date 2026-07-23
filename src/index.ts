@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { config } from './config/index.js';
 import { loadCommands } from './handlers/command-handler.js';
 import { registerEvents } from './handlers/event-handler.js';
@@ -47,6 +47,20 @@ async function registerSlashCommands() {
 
 // Register all event handlers after commands are loaded
 registerEvents(client);
+
+// Log gateway/shard error status
+client.on(Events.Error, (error) => {
+  logger.error({ error }, 'Discord client error');
+});
+client.on(Events.ShardError, (error, shardId) => {
+  logger.error({ error, shardId }, 'Discord shard error');
+});
+client.on(Events.ShardDisconnect, (event, shardId) => {
+  logger.warn({ code: event.code, shardId }, 'Discord shard disconnected');
+});
+client.on(Events.ShardReconnecting, (shardId) => {
+  logger.warn({ shardId }, 'Discord shard reconnecting');
+});
 
 // Shutdown guard to prevent double-execution from simultaneous signals
 const shutdownState = { isShuttingDown: false };
