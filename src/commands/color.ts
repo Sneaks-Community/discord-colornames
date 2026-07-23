@@ -6,8 +6,7 @@ import { buildAccessDeniedEmbed } from '../utils/embed-builders.js';
 import { safeReply } from '../utils/interaction.js';
 import {
   hasAllowedRole,
-  getColorRoleIdByIndex,
-  getColorRoleNameByIndex,
+  getColorRoleByIndex,
   removeAllColorRoles,
 } from '../utils/role-utilities.js';
 import { validateIntegerInput } from '../utils/validators.js';
@@ -81,15 +80,15 @@ export default {
         return;
       }
 
-      const roleId = getColorRoleIdByIndex(parsedNumber);
+      const entry = getColorRoleByIndex(parsedNumber);
 
-      if (!roleId) {
+      if (!entry) {
         const message = 'Invalid color number. Use /colors to see available options.';
         await safeReply(interaction, { content: message });
         return;
       }
 
-      const roleName = getColorRoleNameByIndex(parsedNumber);
+      const { name: roleName, roleId } = entry;
 
       // Check if user already has this role
       if (member.roles.cache.has(roleId)) {

@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { config } from '../config/index.js';
-import { getColorRoleCount, getColorRoleIdByIndex } from './role-utilities.js';
+import { getColorRoleByIndex, getColorRoleCount } from './role-utilities.js';
 
 /**
  * Build the color list embed that shows all available colors.
@@ -12,9 +12,9 @@ export function buildColorListEmbed(): EmbedBuilder {
   const count = getColorRoleCount();
 
   while (index <= count) {
-    const roleId = getColorRoleIdByIndex(index);
-    if (roleId) {
-      list += `${index}: <@&${roleId}>\n`;
+    const entry = getColorRoleByIndex(index);
+    if (entry) {
+      list += `${index}: <@&${entry.roleId}>\n`;
     }
     index++;
   }

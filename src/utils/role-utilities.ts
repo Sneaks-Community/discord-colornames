@@ -1,4 +1,5 @@
 import type { GuildMember, Role } from 'discord.js';
+import type { ColorRoleEntry } from '../config/types.js';
 import { config } from '../config/index.js';
 import { logger } from '../logger.js';
 
@@ -10,29 +11,16 @@ export function getColorRoleIds(): string[] {
 }
 
 /**
- * Get the color role ID for a given index (1-based).
+ * Get the color role entry for a given index (1-based).
  * @param index - 1-based index into the color roles list
- * @returns The role ID, or undefined if invalid
+ * @returns The color role entry, or undefined if invalid
  */
-export function getColorRoleIdByIndex(index: number): string | undefined {
-  const roles = config.colorRoles;
-  if (index < 1 || index > roles.length) {
-    return undefined;
-  }
-  return roles[index - 1].roleId;
-}
-
-/**
- * Get the color role name for a given index (1-based).
- * @param index - 1-based index into the color roles list
- * @returns The role name, or undefined if invalid
- */
-export function getColorRoleNameByIndex(index: number): string | undefined {
+export function getColorRoleByIndex(index: number): ColorRoleEntry | undefined {
   const entries = config.colorRoles;
   if (index < 1 || index > entries.length) {
     return undefined;
   }
-  return entries[index - 1].name;
+  return entries[index - 1];
 }
 
 /**
