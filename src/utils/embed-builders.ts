@@ -1,4 +1,3 @@
-import type { GuildMember } from 'discord.js';
 import { EmbedBuilder } from 'discord.js';
 import { config } from '../config/index.js';
 import { getColorRoleCount, getColorRoleIdByIndex } from './role-utilities.js';
@@ -33,10 +32,9 @@ export function buildColorListEmbed(): EmbedBuilder {
 
 /**
  * Build the access denied embed for users without allowed roles.
- * @param _member - The member who tried to use the command
  * @returns The constructed EmbedBuilder
  */
-export function buildAccessDeniedEmbed(_member: GuildMember): EmbedBuilder {
+export function buildAccessDeniedEmbed(): EmbedBuilder {
   const builder = new EmbedBuilder();
   return builder
     .setTitle('Access Denied')

@@ -45,7 +45,7 @@ export default {
       // Check if user has allowed role
       if (!hasAllowedRole(member)) {
         logger.debug({ hasAllowedRole: false, userId: interaction.user.id }, 'Access denied');
-        const embed = buildAccessDeniedEmbed(member);
+        const embed = buildAccessDeniedEmbed();
         await safeReply(interaction, { embeds: [embed], ephemeral: true });
         return;
       }
