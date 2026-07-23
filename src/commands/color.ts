@@ -21,7 +21,7 @@ const data = builder
       .setDescription('The number of the color to select (0 to reset)')
       .setRequired(true)
       .setMinValue(0)
-      .setMaxValue(config.colorRoles.length + 1),
+      .setMaxValue(config.colorRoles.length),
   );
 
 export default {
