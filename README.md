@@ -40,7 +40,7 @@ Copy `.env.example` to `.env` and fill in the values:
 | `HEALTH_PORT` | Port for the health check HTTP server | `3000` |
 | `ACCESS_DENIED_DESCRIPTION` | Message shown to users without allowed roles (supports markdown) | `Sorry, this command is for VIPs and Nitro Boosters only.` |
 | `ALLOWED_ROLES` | Comma-separated role IDs allowed to use color commands | `111,222,333` |
-| `COLOR_ROLE_<NAME>` | Mappings of color names to Discord role IDs (sorted numerically/alphabetically) | `COLOR_ROLE_BLUE=444` |
+| `COLOR_ROLE_<NAME>` | Mappings of color names to Discord role IDs (numbered in the order they appear in `.env`) | `COLOR_ROLE_BLUE=444` |
 
 ## Getting Started
 

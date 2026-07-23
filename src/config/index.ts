@@ -33,18 +33,15 @@ function validateBotToken(token: string): void {
 }
 
 /**
- * Parse color roles from environment variables with explicit ordering.
- * Variables are sorted by their key name to ensure consistent ordering.
+ * Parse color roles from environment variables.
+ * Entries keep the order in which the COLOR_ROLE_<NAME> variables appear in the
+ * environment (i.e. their declaration order in .env), which determines the
+ * numbering shown to users.
  */
 function parseColorRoles(): ColorRoleEntry[] {
   const colorRoleEntries = Object.entries(process.env)
     .filter(([key]) => key.startsWith('COLOR_ROLE_'))
-    .filter(([, value]) => value)
-    .toSorted(([a], [b]) => {
-      const numberA = Math.trunc(Number(a.replace('COLOR_ROLE_', '')));
-      const numberB = Math.trunc(Number(b.replace('COLOR_ROLE_', '')));
-      return numberA - numberB; // Sort numerically by the number after COLOR_ROLE_
-    });
+    .filter(([, value]) => value);
 
   return colorRoleEntries.map(([key, value]) => ({
     name: key.replace('COLOR_ROLE_', '').toLowerCase(),
