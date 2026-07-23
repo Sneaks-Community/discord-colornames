@@ -60,7 +60,6 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
     logger.debug(
       {
         botHighestRolePosition: botMember.roles.highest.position,
-        botRolePosition: botMember.roles.highest.position,
         channelId,
         channelName: sendableChannel.name,
         channelType: sendableChannel.type,
