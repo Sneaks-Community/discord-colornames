@@ -2,6 +2,7 @@ import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { SlashCommandBuilder } from 'discord.js';
 import { config } from '../config/index.js';
 import { logger } from '../logger.js';
+import { buildAccessDeniedEmbed } from '../utils/embed-builders.js';
 import { safeReply } from '../utils/interaction.js';
 import {
   hasAllowedRole,
@@ -44,9 +45,8 @@ export default {
       // Check if user has allowed role
       if (!hasAllowedRole(member)) {
         logger.debug({ hasAllowedRole: false, userId: interaction.user.id }, 'Access denied');
-        await safeReply(interaction, {
-          content: 'You do not have permission to use this command.',
-        });
+        const embed = buildAccessDeniedEmbed(member);
+        await safeReply(interaction, { embeds: [embed], ephemeral: true });
         return;
       }
 
