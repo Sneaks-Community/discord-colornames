@@ -58,8 +58,19 @@ client.on(Events.ShardError, (error, shardId) => {
 client.on(Events.ShardDisconnect, (event, shardId) => {
   logger.warn({ code: event.code, shardId }, 'Discord shard disconnected');
 });
+// A full re-identify means the session was lost and events were dropped.
+client.on(Events.ShardReady, (shardId, unavailableGuilds) => {
+  logger.info({ shardId, unavailableGuilds: unavailableGuilds?.size ?? 0 }, 'Discord shard ready');
+});
 client.on(Events.ShardReconnecting, (shardId) => {
-  logger.warn({ shardId }, 'Discord shard reconnecting');
+  logger.debug({ shardId }, 'Discord shard reconnecting');
+});
+client.on(Events.ShardResume, (shardId, replayedEvents) => {
+  logger.debug({ ping: client.ws.ping, replayedEvents, shardId }, 'Discord shard resumed');
+});
+// Carries gateway close reasons (e.g. "Zombie connection", "Received ReconnectRequest").
+client.on(Events.Debug, (message) => {
+  logger.debug({ message }, 'Discord gateway debug');
 });
 
 // Shutdown guard to prevent double-execution from simultaneous signals
