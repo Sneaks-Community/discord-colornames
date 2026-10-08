@@ -33,14 +33,14 @@ function validateBotToken(token: string): void {
 
 /**
  * Parse color roles from environment variables.
- * Entries keep the order in which the COLOR_ROLE_<NAME> variables appear in the
- * environment (i.e. their declaration order in .env), which determines the
- * numbering shown to users.
+ * Entries are sorted by variable name, which determines the numbering shown to
+ * users. This matches the order Docker and Node's .env loader produce.
  */
 function parseColorRoles(): ColorRoleEntry[] {
   const colorRoleEntries = Object.entries(process.env)
     .filter(([key]) => key.startsWith('COLOR_ROLE_'))
-    .filter(([, value]) => value);
+    .filter(([, value]) => value)
+    .toSorted(([a], [b]) => (a < b ? -1 : 1));
 
   return colorRoleEntries.map(([key, value]) => ({
     name: key.replace('COLOR_ROLE_', '').toLowerCase(),
