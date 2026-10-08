@@ -71,47 +71,44 @@ export default {
     const isHadAllowedRole = config.allowedRoles.some((r) => _oldMember.roles.cache.has(r));
     const hasAllowedRole = config.allowedRoles.some((r) => newMember.roles.cache.has(r));
 
-    // User had an allowed role before but doesn't have one now
-    if (isHadAllowedRole && !hasAllowedRole) {
-      const userId = newMember.user.id;
+    // Only act if the user had an allowed role before but doesn't have one now
+    if (!isHadAllowedRole || hasAllowedRole) return;
 
-      // Debounce: skip if already pending removal for this user
-      if (removalPending.has(userId)) {
-        return;
-      }
+    const userId = newMember.user.id;
 
-      logger.debug(
-        { userId, username: newMember.user.username },
-        'User lost allowed role, scheduling color role removal',
-      );
-
-      const removalPromise = (async () => {
-        try {
-          const { failed, removed } = await removeAllColorRoles(newMember);
-          if (removed.length > 0) {
-            logger.debug(
-              { removedRoles: removed.map((r) => r.name), userId },
-              'Color roles removed',
-            );
-          }
-          if (failed.length > 0) {
-            logger.error(
-              { failedRoles: failed.map((r) => r.name), userId },
-              'Failed to remove some color roles after user lost allowed role',
-            );
-          }
-        } catch (error) {
-          logger.error({ error, userId }, 'Failed to remove color roles');
-        } finally {
-          removalPending.delete(userId);
-        }
-      })();
-
-      removalPending.set(userId, removalPromise);
-
-      // Schedule cleanup for stale entries after timeout
-      setTimeout(() => removalPending.delete(userId), REMOVAL_PENDING_TIMEOUT);
+    // Debounce: skip if already pending removal for this user
+    if (removalPending.has(userId)) {
+      return;
     }
+
+    logger.debug(
+      { userId, username: newMember.user.username },
+      'User lost allowed role, scheduling color role removal',
+    );
+
+    const removalPromise = (async () => {
+      try {
+        const { failed, removed } = await removeAllColorRoles(newMember);
+        if (removed.length > 0) {
+          logger.debug({ removedRoles: removed.map((r) => r.name), userId }, 'Color roles removed');
+        }
+        if (failed.length > 0) {
+          logger.error(
+            { failedRoles: failed.map((r) => r.name), userId },
+            'Failed to remove some color roles after user lost allowed role',
+          );
+        }
+      } catch (error) {
+        logger.error({ error, userId }, 'Failed to remove color roles');
+      } finally {
+        removalPending.delete(userId);
+      }
+    })();
+
+    removalPending.set(userId, removalPromise);
+
+    // Schedule cleanup for stale entries after timeout
+    setTimeout(() => removalPending.delete(userId), REMOVAL_PENDING_TIMEOUT);
   },
   name: Events.GuildMemberUpdate,
 };
