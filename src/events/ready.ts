@@ -8,11 +8,11 @@ import { buildColorListEmbed } from '../utils/embed-builders.js';
 type SendableChannel = TextChannel | NewsChannel;
 
 /**
- * Pin or update the color list message in the configured channel.
- * If a pinned color list message already exists, it will be updated.
- * Otherwise, a new message will be created and pinned.
- * Errors are logged but do not prevent the bot from running.
- */
+Pin or update the color list message in the configured channel.
+If a pinned color list message already exists, it will be updated.
+Otherwise, a new message will be created and pinned.
+Errors are logged but do not prevent the bot from running.
+*/
 async function updateOrPinColorList(client: Client<true>): Promise<void> {
   const channelId = config.pinChannelId;
   if (!channelId) {
@@ -121,9 +121,9 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
 }
 
 /**
- * Event handler for when the bot is ready.
- * Sets the bot's presence, logs the configuration, and triggers auto-pin.
- */
+Event handler for when the bot is ready.
+Sets the bot's presence, logs the configuration, and triggers auto-pin.
+*/
 export default {
   async execute(client: Client<true>) {
     logger.info({ tag: client.user?.tag }, 'Bot is ready!');

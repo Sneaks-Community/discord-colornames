@@ -17,9 +17,9 @@ const MAX_REMOVAL_PENDING_ENTRIES = 1000;
 const cleanupState: { timer: NodeJS.Timeout | undefined } = { timer: undefined };
 
 /**
- * Clean up stale entries from the removalPending Map.
- * Enforces maximum size limit to prevent unbounded growth.
- */
+Clean up stale entries from the removalPending Map.
+Enforces maximum size limit to prevent unbounded growth.
+*/
 function cleanupStaleEntries(): void {
   let cleaned = 0;
 
@@ -46,9 +46,9 @@ function cleanupStaleEntries(): void {
 }
 
 /**
- * Start the periodic cleanup timer for the removalPending Map.
- * The timer is unref'd so it won't prevent process exit.
- */
+Start the periodic cleanup timer for the removalPending Map.
+The timer is unref'd so it won't prevent process exit.
+*/
 function startCleanupTimer(): void {
   if (cleanupState.timer) return; // Already running
 
@@ -60,9 +60,9 @@ function startCleanupTimer(): void {
 }
 
 /**
- * Event handler for when a member's roles are updated.
- * Automatically removes color roles if the user loses their VIP/Booster status.
- */
+Event handler for when a member's roles are updated.
+Automatically removes color roles if the user loses their VIP/Booster status.
+*/
 export default {
   execute(_oldMember: GuildMember, newMember: GuildMember) {
     // Ensure the periodic cleanup timer is running (no-op if already started)

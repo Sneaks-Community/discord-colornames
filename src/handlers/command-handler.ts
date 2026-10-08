@@ -9,15 +9,15 @@ import colorsCommand from '../commands/colors.js';
 import { logger } from '../logger.js';
 
 /**
- * All possible return types from SlashCommandBuilder depending on usage.
- */
+All possible return types from SlashCommandBuilder depending on usage.
+*/
 type SlashCommandData =
   SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder;
 
 /**
- * Interface for all command definitions.
- * Ensures each command has a registered data object and an execute function.
- */
+Interface for all command definitions.
+Ensures each command has a registered data object and an execute function.
+*/
 export interface CommandDefinition {
   data: SlashCommandData;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
@@ -26,9 +26,9 @@ export interface CommandDefinition {
 const commandList: CommandDefinition[] = [colorCommand, colorsCommand];
 
 /**
- * Load all command handlers.
- * Returns a Map of command name to command definition.
- */
+Load all command handlers.
+Returns a Map of command name to command definition.
+*/
 export function loadCommands(): Map<string, CommandDefinition> {
   const commands = new Map<string, CommandDefinition>();
 

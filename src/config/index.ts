@@ -3,8 +3,8 @@ import type { BotConfig, ColorRoleEntry } from './types.js';
 import { logger } from '../logger.js';
 
 /**
- * Zod schema for validating and parsing environment variables.
- */
+Zod schema for validating and parsing environment variables.
+*/
 const configSchema = z.object({
   ACCESS_DENIED_DESCRIPTION: z
     .string()
@@ -20,9 +20,9 @@ const configSchema = z.object({
 });
 
 /**
- * Validate Discord bot token format.
- * Discord bot tokens match the pattern: [A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+
- */
+Validate Discord bot token format.
+Discord bot tokens match the pattern: [A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+
+*/
 function validateBotToken(token: string): void {
   if (!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(token)) {
     throw new Error(
@@ -32,10 +32,10 @@ function validateBotToken(token: string): void {
 }
 
 /**
- * Parse color roles from environment variables.
- * Entries are sorted by variable name, which determines the numbering shown to
- * users. This matches the order Docker and Node's .env loader produce.
- */
+Parse color roles from environment variables.
+Entries are sorted by variable name, which determines the numbering shown to
+users. This matches the order Docker and Node's .env loader produce.
+*/
 function parseColorRoles(): ColorRoleEntry[] {
   const colorRoleEntries = Object.entries(process.env)
     .filter(([key]) => key.startsWith('COLOR_ROLE_'))
@@ -49,8 +49,8 @@ function parseColorRoles(): ColorRoleEntry[] {
 }
 
 /**
- * Load environment variables, validate them, and build the bot configuration.
- */
+Load environment variables, validate them, and build the bot configuration.
+*/
 function loadConfig(): BotConfig {
   // Environment variables are loaded via ../environment.js (imported
   // transitively by ../logger.js) before this module executes.

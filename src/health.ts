@@ -5,8 +5,8 @@ import { logger } from './logger.js';
 const PORT = config.healthPort;
 
 /**
- * Create the health check HTTP server, wire up error handling, and start listening.
- */
+Create the health check HTTP server, wire up error handling, and start listening.
+*/
 function createHealthServer(): http.Server {
   const healthServer = http.createServer((_request, response) => {
     const now = new Date();

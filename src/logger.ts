@@ -3,8 +3,8 @@ import './environment.js';
 import pino from 'pino';
 
 /**
- * Valid Pino log levels.
- */
+Valid Pino log levels.
+*/
 export const VALID_LOG_LEVELS = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'] as const;
 export type LogLevel = (typeof VALID_LOG_LEVELS)[number];
 

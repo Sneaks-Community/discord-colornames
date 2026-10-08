@@ -3,9 +3,9 @@ import { Events, MessageFlags } from 'discord.js';
 import { logger } from '../logger.js';
 
 /**
- * Event handler for slash command interactions.
- * Routes interactions to the appropriate command handlers.
- */
+Event handler for slash command interactions.
+Routes interactions to the appropriate command handlers.
+*/
 export default {
   execute(interaction: Interaction) {
     void (async () => {

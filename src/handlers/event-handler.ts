@@ -20,9 +20,9 @@ const eventHandlers: EventDefinition[] = [
 ];
 
 /**
- * Register all event handlers with the Discord client.
- * Each event is registered using .on() or .once() based on its configuration.
- */
+Register all event handlers with the Discord client.
+Each event is registered using .on() or .once() based on its configuration.
+*/
 export function registerEvents(client: Client) {
   for (const eventHandler of eventHandlers) {
     // Cast to keyof ClientEvents to satisfy TypeScript's type system

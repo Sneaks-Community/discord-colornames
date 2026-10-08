@@ -3,9 +3,9 @@ import { config } from '../config/index.js';
 import { getColorRoleByIndex, getColorRoleCount } from './role-utilities.js';
 
 /**
- * Build the color list embed that shows all available colors.
- * @returns The constructed EmbedBuilder
- */
+Build the color list embed that shows all available colors.
+@returns The constructed EmbedBuilder
+*/
 export function buildColorListEmbed(): EmbedBuilder {
   let list = '0: Reset Color\n';
   let index = 1;
@@ -31,9 +31,9 @@ export function buildColorListEmbed(): EmbedBuilder {
 }
 
 /**
- * Build the access denied embed for users without allowed roles.
- * @returns The constructed EmbedBuilder
- */
+Build the access denied embed for users without allowed roles.
+@returns The constructed EmbedBuilder
+*/
 export function buildAccessDeniedEmbed(): EmbedBuilder {
   const builder = new EmbedBuilder();
   return builder
