@@ -4,9 +4,6 @@ import { config } from '../config/index.js';
 import { logger } from '../logger.js';
 import { buildColorListEmbed } from '../utils/embed-builders.js';
 
-// Union type for guild channels that support send() and pin()
-type SendableChannel = TextChannel | NewsChannel;
-
 /**
 Pin or update the color list message in the configured channel.
 If a pinned color list message already exists, it will be updated.
@@ -52,7 +49,7 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
     }
 
     // Safe cast after all our checks
-    const sendableChannel = channel as SendableChannel;
+    const sendableChannel = channel as TextChannel | NewsChannel;
 
     // Diagnostic: Check bot's permissions before attempting pin operations
     const botMember = await sendableChannel.guild.members.fetch(client.user.id);
