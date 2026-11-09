@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "eslint-plugin-perfectionist": "^5.13.0",
     "eslint-plugin-unicorn": "^79.0.0",
     "pino-pretty": "^13.2.0",
