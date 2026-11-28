@@ -109,8 +109,9 @@ async function performShutdown() {
   await client.destroy();
 }
 
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+// Wrapped so Node's signal-name argument never reaches process.exit().
+process.on('SIGINT', () => void shutdown());
+process.on('SIGTERM', () => void shutdown());
 
 process.on('unhandledRejection', (reason: unknown) => {
   const errorInfo =
