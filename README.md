@@ -38,6 +38,7 @@ Copy `.env.example` to `.env` and fill in the values:
 | `EMBED_COLOR` | Decimal color for embeds | `299410` |
 | `COLOR_LIST_TITLE` | Title of the color list embed (also used to detect the pinned message) | `Color Roles` |
 | `LOG_LEVEL` | Log level (`fatal`, `error`, `warn`, `info`, `debug`, `trace`) | `info` |
+| `DRY_RUN` | Log every change the bot would make to Discord (`Dry run: would ...` at `info`) instead of making it: role changes, the pinned color list, and slash command registration. `/color` replies say what would have happened. Slash commands only work if a normal run registered them earlier. Default `false`. | `true` |
 | `HEALTH_PORT` | Port for the health check HTTP server | `3000` |
 | `ACCESS_DENIED_DESCRIPTION` | Message shown to users without allowed roles (supports markdown) | `Sorry, this command is for VIPs and Nitro Boosters only.` |
 | `ALLOWED_ROLES` | Comma-separated role IDs allowed to use color commands | `111,222,333` |

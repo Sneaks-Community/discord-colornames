@@ -90,6 +90,16 @@ async function updateOrPinColorList(client: Client<true>): Promise<void> {
         pin.message.embeds.length > 0 && pin.message.embeds[0].title === config.colorListTitle,
     );
 
+    if (config.dryRun) {
+      logger.info(
+        { channelId, messageId: existingPin?.message.id },
+        existingPin
+          ? 'Dry run: would update the pinned color list'
+          : 'Dry run: would post and pin the color list',
+      );
+      return;
+    }
+
     const embed = buildColorListEmbed();
 
     if (existingPin) {

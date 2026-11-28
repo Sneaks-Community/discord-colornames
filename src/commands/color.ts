@@ -66,7 +66,11 @@ export default {
           { userId: interaction.user.id, username: interaction.user.username },
           'Color roles reset',
         );
-        await safeReply(interaction, { content: 'All color roles have been removed.' });
+        await safeReply(interaction, {
+          content: config.dryRun
+            ? 'Dry run: would remove all your color roles.'
+            : 'All color roles have been removed.',
+        });
         return;
       }
 
@@ -117,6 +121,14 @@ export default {
         const role = guild.roles.cache.get(roleId);
         if (!role) {
           await safeReply(interaction, { content: 'Error: Color role not found.' });
+          return;
+        }
+
+        if (config.dryRun) {
+          logger.info({ roleName, userId: interaction.user.id }, 'Dry run: would add color role');
+          await safeReply(interaction, {
+            content: `Dry run: would set your color to ${roleName}.`,
+          });
           return;
         }
 

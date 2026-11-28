@@ -27,6 +27,14 @@ async function registerSlashCommands() {
     .map((command) => command.data.toJSON())
     .toArray();
 
+  if (config.dryRun) {
+    logger.info(
+      { commands: commandData.map((command) => command.name), serverId: config.serverId },
+      'Dry run: would register application commands',
+    );
+    return;
+  }
+
   try {
     logger.info(
       { commandCount: commandData.length, serverId: config.serverId },
@@ -141,6 +149,7 @@ process.on('uncaughtException', (error: unknown) => {
 
 // Login to Discord
 async function start() {
+  if (config.dryRun) logger.warn('DRY_RUN is on: changes to Discord are logged, not made');
   try {
     // Register slash commands before logging in
     await registerSlashCommands();

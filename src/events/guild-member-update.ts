@@ -11,14 +11,10 @@ export default {
   async execute(_oldMember: GuildMember | PartialGuildMember, newMember: GuildMember) {
     if (hasAllowedRole(newMember) || !canAutoRemove(newMember.guild)) return;
 
-    const userId = newMember.user.id;
-    const { failed, removed } = await removeAllColorRoles(newMember);
-    if (removed.length > 0) {
-      logger.debug({ removedRoles: removed.map((r) => r.name), userId }, 'Color roles removed');
-    }
+    const { failed } = await removeAllColorRoles(newMember);
     if (failed.length > 0) {
       logger.error(
-        { failedRoles: failed.map((r) => r.name), userId },
+        { failedRoles: failed.map((r) => r.name), userId: newMember.user.id },
         'Failed to remove some color roles after user lost allowed role',
       );
     }

@@ -18,6 +18,7 @@ export function fakeMember(guild, roleIds, userId = '500000000000000001') {
   const member = {
     guild,
     roles: {
+      add: mock.fn(async () => {}),
       cache: new Map(roleIds.map((id) => [id, guild.roles.cache.get(id) ?? fakeRole(id)])),
       remove: mock.fn(async () => {}),
       set: mock.fn(async () => {}),
@@ -27,6 +28,33 @@ export function fakeMember(guild, roleIds, userId = '500000000000000001') {
   guild.members.cache.set(userId, member);
   return member;
 }
+
+// Every reply method records into `replies`, so tests don't depend on reply vs deferReply/editReply.
+export function fakeInteraction(member, number) {
+  const replies = [];
+  const record = mock.fn(async (payload) => {
+    replies.push(payload);
+  });
+  return {
+    commandName: 'color',
+    deferReply: mock.fn(async () => {}),
+    deferred: false,
+    editReply: record,
+    followUp: record,
+    guild: member.guild,
+    inCachedGuild: () => true,
+    member,
+    options: { getInteger: () => number },
+    replied: false,
+    replies,
+    reply: record,
+    user: member.user,
+  };
+}
+
+export const lastReply = (interaction) => interaction.replies.at(-1);
+
+export const colorIndex = (name) => config.colorRoles.findIndex((entry) => entry.name === name) + 1;
 
 // Looked up by name: a local .env can add more COLOR_ROLE_* entries to config.
 export function ids() {

@@ -69,7 +69,10 @@ export async function reconcileColorRoles(guild: Guild): Promise<number> {
     const { removed } = await removeAllColorRoles(member);
     if (removed.length > 0) cleaned++;
   }
-  logger.info({ cleaned }, 'Reconciled color roles');
+  logger.info(
+    { members: cleaned },
+    config.dryRun ? 'Dry run: reconcile would remove color roles' : 'Reconciled color roles',
+  );
   return cleaned;
 }
 
@@ -84,9 +87,8 @@ export interface RemoveColorRolesResult {
 }
 
 /**
-Remove all color roles from a member.
-Batches removal into a single API call for efficiency and atomicity, falling
-back to per-role removal if the batch call fails.
+Remove all color roles from a member in one API call, falling back to per-role removal
+if that fails. In dry run, only logs and reports the roles as removed.
 @param member - The Discord member
 @returns The roles that were removed and the roles that could not be removed
 */
@@ -104,9 +106,16 @@ export async function removeAllColorRoles(member: GuildMember): Promise<RemoveCo
     return { failed, removed };
   }
 
+  const logFields = { roles: rolesToRemove.map((role) => role.name), userId: member.user.id };
+  if (config.dryRun) {
+    logger.info(logFields, 'Dry run: would remove color roles');
+    return { failed, removed: rolesToRemove };
+  }
+
   // Remove all roles in a single API call for atomicity
   try {
     await member.roles.remove(rolesToRemove);
+    logger.debug(logFields, 'Color roles removed');
     return { failed, removed: rolesToRemove };
   } catch {
     logger.error(

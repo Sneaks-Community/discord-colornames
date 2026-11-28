@@ -14,4 +14,8 @@ export interface BotConfig {
   allowedRoles: string[];
   pinChannelId?: string;
   accessDeniedDescription: string;
+  /**
+  Log every write to Discord instead of making it.
+  */
+  dryRun: boolean;
 }
