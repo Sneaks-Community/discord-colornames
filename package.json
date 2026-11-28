@@ -33,18 +33,18 @@
     "discord.js"
   ],
   "dependencies": {
-    "discord.js": "^14.27.0",
+    "discord.js": "^14.28.1",
     "pino": "^10.4.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.15.0",
-    "eslint-plugin-perfectionist": "^5.13.0",
-    "eslint-plugin-unicorn": "^79.0.0",
+    "eslint": "^10.16.0",
+    "eslint-plugin-perfectionist": "^5.14.0",
+    "eslint-plugin-unicorn": "^80.0.0",
     "pino-pretty": "^13.2.0",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.73.0"
+    "typescript-eslint": "^8.74.0"
   }
 }
