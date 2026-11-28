@@ -1,4 +1,4 @@
-import type { GuildMember, Role } from 'discord.js';
+import type { Guild, GuildMember, Role } from 'discord.js';
 import type { ColorRoleEntry } from '../config/types.js';
 import { config } from '../config/index.js';
 import { logger } from '../logger.js';
@@ -34,6 +34,43 @@ Check if a member has any allowed role to use color commands.
 */
 export function hasAllowedRole(member: GuildMember): boolean {
   return config.allowedRoles.some((roleId) => member.roles.cache.has(roleId));
+}
+
+/**
+Whether automatic color removal is safe in this guild. With no allowed roles, or one missing
+from the guild, every member looks unauthorized and would lose their color.
+*/
+export function canAutoRemove(guild: Guild): boolean {
+  return (
+    config.allowedRoles.length > 0 &&
+    config.allowedRoles.every((roleId) => guild.roles.cache.has(roleId))
+  );
+}
+
+/**
+Remove color roles from every member without an allowed role, catching up on role changes
+missed while the bot had no gateway session.
+@returns How many members lost at least one color role
+*/
+export async function reconcileColorRoles(guild: Guild): Promise<number> {
+  if (!canAutoRemove(guild)) {
+    logger.warn(
+      { allowedRoles: config.allowedRoles },
+      'ALLOWED_ROLES is empty or names a role missing from the server, skipping color role reconcile',
+    );
+    return 0;
+  }
+
+  // ponytail: loads every member into memory; page with guild.members.list if the guild outgrows the container memory limit
+  await guild.members.fetch();
+  let cleaned = 0;
+  for (const member of guild.members.cache.values()) {
+    if (hasAllowedRole(member)) continue;
+    const { removed } = await removeAllColorRoles(member);
+    if (removed.length > 0) cleaned++;
+  }
+  logger.info({ cleaned }, 'Reconciled color roles');
+  return cleaned;
 }
 
 /**

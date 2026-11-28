@@ -1,14 +1,16 @@
 import { REST, Routes } from 'discord.js';
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { config } from './config/index.js';
 import { loadCommands } from './handlers/command-handler.js';
 import { registerEvents } from './handlers/event-handler.js';
 import { server as healthServer } from './health.js';
 import { logger } from './logger.js';
+import { reconcileColorRoles } from './utils/role-utilities.js';
 
-// Initialize Discord client with required intents
+// Without the GuildMember partial, role changes on uncached members never emit GuildMemberUpdate.
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  partials: [Partials.GuildMember],
 });
 
 // Load commands on startup and cache on client for interaction handler
@@ -58,9 +60,20 @@ client.on(Events.ShardError, (error, shardId) => {
 client.on(Events.ShardDisconnect, (event, shardId) => {
   logger.warn({ code: event.code, shardId }, 'Discord shard disconnected');
 });
-// A full re-identify means the session was lost and events were dropped.
+// Fires at startup and on every full re-identify (session lost, events dropped), so reconcile here.
 client.on(Events.ShardReady, (shardId, unavailableGuilds) => {
   logger.info({ shardId, unavailableGuilds: unavailableGuilds?.size ?? 0 }, 'Discord shard ready');
+  const guild = client.guilds.cache.get(config.serverId);
+  if (!guild) {
+    logger.warn(
+      { serverId: config.serverId },
+      'Bot is not in SERVER_ID, skipping color role reconcile',
+    );
+    return;
+  }
+  void reconcileColorRoles(guild).catch((error: unknown) => {
+    logger.error({ error }, 'Failed to reconcile color roles');
+  });
 });
 client.on(Events.ShardReconnecting, (shardId) => {
   logger.debug({ shardId }, 'Discord shard reconnecting');

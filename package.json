@@ -14,7 +14,8 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
     "format:check": "prettier --check src/",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsc && node --env-file=test/test.env --test \"test/*.test.js\""
   },
   "engines": {
     "node": ">=26.0.0"
